@@ -1,8 +1,6 @@
-// === CONFIGURAÇÕES DO SUPABASE ===
-const SUPABASE_URL = "https://apxdzmbhnwvybptilekq.supabase.co"; // Substitua pelo seu URL
-const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFweGR6bWJobnd2eWJwdGlsZWtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MjM1MjksImV4cCI6MjA1OTk5OTUyOX0.s_ejRYlKNt2Tx4cO155kyABvKDT37-lM8OdckJ4_ETM"; // Substitua pela sua chave anônima
+// script.js
+import { SUPABASE_URL, SUPABASE_API_KEY } from './supabaseClient.js';
 
-// === Lógica do Jogo ===
 const cards = document.querySelectorAll('.card');
 const movesText = document.getElementById("moves");
 const flipSound = new Audio("flip.mp3");
@@ -82,12 +80,10 @@ function restartGame() {
   }, 300);
 }
 
-// === Mostrar o formulário para salvar score ===
 function showSaveScore() {
   document.getElementById('saveScore').style.display = 'block';
 }
 
-// === Salvar score no SUPABASE ===
 async function saveScore() {
   const nome = document.getElementById("playerName").value || "Anônimo";
   await fetch(`${SUPABASE_URL}/rest/v1/ranking`, {
@@ -103,7 +99,6 @@ async function saveScore() {
   document.getElementById('saveScore').style.display = 'none';
 }
 
-// === Carregar ranking do SUPABASE ===
 async function loadLeaderboard() {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/ranking?select=nome,movimentos&order=movimentos.asc&limit=10`, {
     headers: {
@@ -119,5 +114,4 @@ async function loadLeaderboard() {
   });
 }
 
-// Carrega ranking assim que o jogo abre
 loadLeaderboard();
