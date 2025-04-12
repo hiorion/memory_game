@@ -1,4 +1,3 @@
-// script.js
 import { SUPABASE_URL, SUPABASE_API_KEY } from './supabaseClient.js';
 
 const cards = document.querySelectorAll('.card');
@@ -115,3 +114,7 @@ async function loadLeaderboard() {
 }
 
 loadLeaderboard();
+
+// ✅ Event listeners para os botões
+document.getElementById('btnSaveScore')?.addEventListener('click', saveScore);
+document.getElementById('btnRestart')?.addEventListener('click', restartGame);
