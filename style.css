@@ -1,0 +1,51 @@
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background: #f4f4f4;
+}
+h1 {
+  margin: 20px 0;
+}
+.controls {
+  margin-bottom: 20px;
+  font-size: 1.2rem;
+}
+.controls button {
+  margin-left: 20px;
+  padding: 5px 15px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.game-board {
+  width: 600px;
+  margin: auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.card {
+  width: 100%;
+  padding-bottom: 100%;
+  background-color: #1e90ff;
+  border-radius: 10px;
+  transform: rotateY(0deg);
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  cursor: pointer;
+  position: relative;
+}
+.card::before {
+  content: "❓";
+  font-size: 2.5rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.card.flipped {
+  background-color: #f1c40f;
+  transform: rotateY(180deg);
+}
+.card.flipped::before {
+  content: attr(data-icon);
+}
