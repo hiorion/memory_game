@@ -1,12 +1,10 @@
 // === CONFIGURAÇÕES DO SUPABASE ===
-const SUPABASE_URL = "https://apxdzmbhnwvybptilekq.supabase.co";
-const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFweGR6bWJobnd2eWJwdGlsZWtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MjM1MjksImV4cCI6MjA1OTk5OTUyOX0.s_ejRYlKNt2Tx4cO155kyABvKDT37-lM8OdckJ4_ETM";
+const SUPABASE_URL = "https://apxdzmbhnwvybptilekq.supabase.co"; // Substitua pelo seu URL
+const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFweGR6bWJobnd2eWJwdGlsZWtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MjM1MjksImV4cCI6MjA1OTk5OTUyOX0.s_ejRYlKNt2Tx4cO155kyABvKDT37-lM8OdckJ4_ETM"; // Substitua pela sua chave anônima
 
-// === SEU CÓDIGO ORIGINAL + MODIFICADO ===
-
+// === Lógica do Jogo ===
 const cards = document.querySelectorAll('.card');
 const movesText = document.getElementById("moves");
-
 const flipSound = new Audio("flip.mp3");
 const matchSound = new Audio("match.mp3");
 
@@ -17,16 +15,13 @@ let moves = 0;
 
 function flipCard() {
   if (lockBoard || this === firstCard) return;
-
   flipSound.play();
   this.classList.add('flipped');
-
   if (!hasFlippedCard) {
     hasFlippedCard = true;
     firstCard = this;
     return;
   }
-
   secondCard = this;
   checkForMatch();
 }
@@ -34,7 +29,6 @@ function flipCard() {
 function checkForMatch() {
   moves++;
   movesText.textContent = "Movimentos: " + moves;
-
   const isMatch = firstCard.dataset.card === secondCard.dataset.card;
   isMatch ? disableCards() : unflipCards();
 }
@@ -44,7 +38,6 @@ function disableCards() {
   firstCard.removeEventListener('click', flipCard);
   secondCard.removeEventListener('click', flipCard);
   resetBoard();
-
   if (document.querySelectorAll('.flipped').length === cards.length) {
     showSaveScore();
   }
@@ -89,15 +82,14 @@ function restartGame() {
   }, 300);
 }
 
-// === NOVO: Mostrar o formulário para salvar score ===
+// === Mostrar o formulário para salvar score ===
 function showSaveScore() {
   document.getElementById('saveScore').style.display = 'block';
 }
 
-// === NOVO: Salvar score no SUPABASE ===
+// === Salvar score no SUPABASE ===
 async function saveScore() {
-  const name = document.getElementById("playerName").value || "Anônimo";
-
+  const nome = document.getElementById("playerName").value || "Anônimo";
   await fetch(`${SUPABASE_URL}/rest/v1/ranking`, {
     method: "POST",
     headers: {
@@ -105,27 +97,25 @@ async function saveScore() {
       "apikey": SUPABASE_API_KEY,
       "Authorization": `Bearer ${SUPABASE_API_KEY}`
     },
-    body: JSON.stringify({ name, moves })
+    body: JSON.stringify({ nome, movimentos: moves })
   });
-
   loadLeaderboard();
   document.getElementById('saveScore').style.display = 'none';
 }
 
-// === NOVO: Carrega ranking do SUPABASE ===
+// === Carregar ranking do SUPABASE ===
 async function loadLeaderboard() {
-  const res = await fetch(`${SUPABASE_URL}/rest/v1/ranking?select=name,moves&order=moves.asc`, {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/ranking?select=nome,movimentos&order=movimentos.asc&limit=10`, {
     headers: {
       "apikey": SUPABASE_API_KEY,
       "Authorization": `Bearer ${SUPABASE_API_KEY}`
     }
   });
-
   const data = await res.json();
   const list = document.getElementById("leaderboard");
   list.innerHTML = "";
   data.forEach((entry, index) => {
-    list.innerHTML += `<li>${index + 1}. 🏅 ${entry.name} — ${entry.moves} movimentos</li>`;
+    list.innerHTML += `<li>${index + 1}. 🏅 ${entry.nome} — ${entry.movimentos} movimentos</li>`;
   });
 }
 
