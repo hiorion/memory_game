@@ -2,20 +2,26 @@ body {
   font-family: sans-serif;
   text-align: center;
   background: #f4f4f4;
+  margin: 0;
+  padding: 0;
 }
+
 h1 {
   margin: 20px 0;
 }
+
 .controls {
   margin-bottom: 20px;
   font-size: 1.2rem;
 }
+
 .controls button {
   margin-left: 20px;
   padding: 5px 15px;
   font-size: 1rem;
   cursor: pointer;
 }
+
 .game-board {
   width: 600px;
   margin: auto;
@@ -23,6 +29,7 @@ h1 {
   grid-template-columns: repeat(4, 1fr);
   gap: 10px;
 }
+
 .card {
   width: 100%;
   padding-bottom: 100%;
@@ -34,6 +41,7 @@ h1 {
   cursor: pointer;
   position: relative;
 }
+
 .card::before {
   content: "❓";
   font-size: 2.5rem;
@@ -42,10 +50,49 @@ h1 {
   left: 50%;
   transform: translate(-50%, -50%);
 }
+
 .card.flipped {
   background-color: #f1c40f;
   transform: rotateY(180deg);
 }
+
 .card.flipped::before {
   content: attr(data-icon);
+}
+
+/* 🛠️ Estilo para o ranking */
+#leaderboard {
+  list-style: none;        /* Remove a numeração automática */
+  padding: 0;
+  margin: 20px auto;
+  max-width: 400px;
+  text-align: left;
+}
+
+#leaderboard li {
+  background: white;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 1rem;
+}
+
+/* 📝 Estilo para o input e botão de salvar pontuação */
+#saveScore {
+  margin: 20px 0;
+}
+
+#saveScore input {
+  padding: 5px 10px;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+#saveScore button {
+  padding: 6px 15px;
+  font-size: 1rem;
+  margin-left: 10px;
+  cursor: pointer;
 }
