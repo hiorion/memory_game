@@ -5,6 +5,15 @@
   <title>Jogo da Memória</title>
   <link rel="stylesheet" href="style.css">
 </head>
+<!-- Formulário para salvar o nome -->
+<div id="saveScore" style="display:none; margin-top: 20px;">
+  <input type="text" id="playerName" placeholder="Seu nome" />
+  <button onclick="saveScore()">Salvar</button>
+</div>
+
+<!-- Ranking -->
+<h2>🏆 Ranking</h2>
+<ol id="leaderboard"></ol>
 <body>
   <h1>🧠 Jogo da Memória</h1>
   <div class="controls">

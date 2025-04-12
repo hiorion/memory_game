@@ -44,6 +44,9 @@ function disableCards() {
   firstCard.removeEventListener('click', flipCard);
   secondCard.removeEventListener('click', flipCard);
   resetBoard();
+  if (document.querySelectorAll('.flipped').length === cards.length) {
+    showSaveScore(); // mostra o formulário para salvar
+  }
 }
 
 // Desvira cartas diferentes
@@ -89,3 +92,38 @@ function restartGame() {
     });
   }, 300);
 }
+// Exibe o formulário para salvar pontuação
+function showSaveScore() {
+  document.getElementById('saveScore').style.display = 'block';
+}
+
+// Salva a pontuação no localStorage
+function saveScore() {
+  const name = document.getElementById("playerName").value || "Anônimo";
+  const score = { name, moves };
+
+  const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+  leaderboard.push(score);
+
+  // Ordena do menor número de movimentos para o maior
+  leaderboard.sort((a, b) => a.moves - b.moves);
+
+  // Limita a 10 posições
+  localStorage.setItem("leaderboard", JSON.stringify(leaderboard.slice(0, 10)));
+  
+  renderLeaderboard();
+  document.getElementById('saveScore').style.display = 'none';
+}
+
+// Renderiza o leaderboard
+function renderLeaderboard() {
+  const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+  const list = document.getElementById("leaderboard");
+  list.innerHTML = "";
+  leaderboard.forEach((entry, index) => {
+    list.innerHTML += `<li>${index + 1}. 🏅 ${entry.name} — ${entry.moves} movimentos</li>`;
+  });
+}
+
+// Inicia a lista quando o jogo carrega
+renderLeaderboard();
