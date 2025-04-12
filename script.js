@@ -1,23 +1,25 @@
-// Seleciona todas as cartas e elementos do DOM
+// === CONFIGURAÇÕES DO SUPABASE ===
+const SUPABASE_URL = "https://henry_dev.supabase.co";
+const SUPABASE_API_KEY = "apxdzmbhnwvybptilekq";
+
+// === SEU CÓDIGO ORIGINAL + MODIFICADO ===
+
 const cards = document.querySelectorAll('.card');
-const movesText = document.getElementById("moves"); // texto com contador de movimentos
+const movesText = document.getElementById("moves");
 
-// Sons
-const flipSound = new Audio("flip.mp3");   // som ao virar carta
-const matchSound = new Audio("match.mp3"); // som ao acertar par
+const flipSound = new Audio("flip.mp3");
+const matchSound = new Audio("match.mp3");
 
-// Variáveis de controle
-let hasFlippedCard = false;  // controla se a primeira carta foi virada
-let lockBoard = false;       // impede ações durante animações
-let firstCard, secondCard;   // armazena as duas cartas clicadas
-let moves = 0;               // contador de jogadas
+let hasFlippedCard = false;
+let lockBoard = false;
+let firstCard, secondCard;
+let moves = 0;
 
-// Função chamada ao clicar em uma carta
 function flipCard() {
-  if (lockBoard || this === firstCard) return; // não permite virar mais de 2 ou a mesma carta
+  if (lockBoard || this === firstCard) return;
 
-  flipSound.play(); // toca som de clique
-  this.classList.add('flipped'); // vira a carta visualmente
+  flipSound.play();
+  this.classList.add('flipped');
 
   if (!hasFlippedCard) {
     hasFlippedCard = true;
@@ -29,7 +31,6 @@ function flipCard() {
   checkForMatch();
 }
 
-// Verifica se as cartas são iguais
 function checkForMatch() {
   moves++;
   movesText.textContent = "Movimentos: " + moves;
@@ -38,18 +39,17 @@ function checkForMatch() {
   isMatch ? disableCards() : unflipCards();
 }
 
-// Desativa cartas que deram par
 function disableCards() {
   matchSound.play();
   firstCard.removeEventListener('click', flipCard);
   secondCard.removeEventListener('click', flipCard);
   resetBoard();
+
   if (document.querySelectorAll('.flipped').length === cards.length) {
-    showSaveScore(); // mostra o formulário para salvar
+    showSaveScore();
   }
 }
 
-// Desvira cartas diferentes
 function unflipCards() {
   lockBoard = true;
   setTimeout(() => {
@@ -59,13 +59,11 @@ function unflipCards() {
   }, 1000);
 }
 
-// Reseta variáveis de controle
 function resetBoard() {
   [hasFlippedCard, lockBoard] = [false, false];
   [firstCard, secondCard] = [null, null];
 }
 
-// Embaralha as cartas no início
 (function shuffle() {
   cards.forEach(card => {
     let randomPos = Math.floor(Math.random() * 12);
@@ -73,10 +71,8 @@ function resetBoard() {
   });
 })();
 
-// Adiciona eventos de clique
 cards.forEach(card => card.addEventListener('click', flipCard));
 
-// Reinicia o jogo
 function restartGame() {
   cards.forEach(card => {
     card.classList.remove('flipped');
@@ -92,38 +88,45 @@ function restartGame() {
     });
   }, 300);
 }
-// Exibe o formulário para salvar pontuação
+
+// === NOVO: Salvar score no SUPABASE ===
 function showSaveScore() {
   document.getElementById('saveScore').style.display = 'block';
 }
 
-// Salva a pontuação no localStorage
-function saveScore() {
+async function saveScore() {
   const name = document.getElementById("playerName").value || "Anônimo";
-  const score = { name, moves };
 
-  const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
-  leaderboard.push(score);
+  await fetch(`${SUPABASE_URL}/rest/v1/ranking`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_API_KEY,
+      "Authorization": `Bearer ${SUPABASE_API_KEY}`
+    },
+    body: JSON.stringify({ name, moves })
+  });
 
-  // Ordena do menor número de movimentos para o maior
-  leaderboard.sort((a, b) => a.moves - b.moves);
-
-  // Limita a 10 posições
-  localStorage.setItem("leaderboard", JSON.stringify(leaderboard.slice(0, 10)));
-  
-  renderLeaderboard();
+  loadLeaderboard();
   document.getElementById('saveScore').style.display = 'none';
 }
 
-// Renderiza o leaderboard
-function renderLeaderboard() {
-  const leaderboard = JSON.parse(localStorage.getItem("leaderboard")) || [];
+// === NOVO: Carrega ranking do SUPABASE ===
+async function loadLeaderboard() {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/ranking?select=name,moves&order=moves.asc`, {
+    headers: {
+      "apikey": SUPABASE_API_KEY,
+      "Authorization": `Bearer ${SUPABASE_API_KEY}`
+    }
+  });
+
+  const data = await res.json();
   const list = document.getElementById("leaderboard");
   list.innerHTML = "";
-  leaderboard.forEach((entry, index) => {
+  data.forEach((entry, index) => {
     list.innerHTML += `<li>${index + 1}. 🏅 ${entry.name} — ${entry.moves} movimentos</li>`;
   });
 }
 
-// Inicia a lista quando o jogo carrega
-renderLeaderboard();
+// Carrega ranking assim que o jogo abre
+loadLeaderboard();
