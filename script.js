@@ -1,6 +1,6 @@
 // === CONFIGURAÇÕES DO SUPABASE ===
-const SUPABASE_URL = "https://henry_dev.supabase.co";
-const SUPABASE_API_KEY = "apxdzmbhnwvybptilekq";
+const SUPABASE_URL = "https://apxdzmbhnwvybptilekq.supabase.co";
+const SUPABASE_API_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFweGR6bWJobnd2eWJwdGlsZWtxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDQ0MjM1MjksImV4cCI6MjA1OTk5OTUyOX0.s_ejRYlKNt2Tx4cO155kyABvKDT37-lM8OdckJ4_ETM";
 
 // === SEU CÓDIGO ORIGINAL + MODIFICADO ===
 
