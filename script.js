@@ -66,4 +66,68 @@ function resetBoard() {
 
 (function shuffle() {
   cards.forEach(card => {
-    let randomPos = Math.floor(Math
+    let randomPos = Math.floor(Math.random() * 12);
+    card.style.order = randomPos;
+  });
+})();
+
+cards.forEach(card => card.addEventListener('click', flipCard));
+
+function restartGame() {
+  cards.forEach(card => {
+    card.classList.remove('flipped');
+    card.addEventListener('click', flipCard);
+  });
+  moves = 0;
+  movesText.textContent = "Movimentos: 0";
+  resetBoard();
+  setTimeout(() => {
+    cards.forEach(card => {
+      let randomPos = Math.floor(Math.random() * 12);
+      card.style.order = randomPos;
+    });
+  }, 300);
+}
+
+// === NOVO: Mostrar o formulário para salvar score ===
+function showSaveScore() {
+  document.getElementById('saveScore').style.display = 'block';
+}
+
+// === NOVO: Salvar score no SUPABASE ===
+async function saveScore() {
+  const name = document.getElementById("playerName").value || "Anônimo";
+
+  await fetch(`${SUPABASE_URL}/rest/v1/ranking`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "apikey": SUPABASE_API_KEY,
+      "Authorization": `Bearer ${SUPABASE_API_KEY}`
+    },
+    body: JSON.stringify({ name, moves })
+  });
+
+  loadLeaderboard();
+  document.getElementById('saveScore').style.display = 'none';
+}
+
+// === NOVO: Carrega ranking do SUPABASE ===
+async function loadLeaderboard() {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/ranking?select=name,moves&order=moves.asc`, {
+    headers: {
+      "apikey": SUPABASE_API_KEY,
+      "Authorization": `Bearer ${SUPABASE_API_KEY}`
+    }
+  });
+
+  const data = await res.json();
+  const list = document.getElementById("leaderboard");
+  list.innerHTML = "";
+  data.forEach((entry, index) => {
+    list.innerHTML += `<li>${index + 1}. 🏅 ${entry.name} — ${entry.moves} movimentos</li>`;
+  });
+}
+
+// Carrega ranking assim que o jogo abre
+loadLeaderboard();
